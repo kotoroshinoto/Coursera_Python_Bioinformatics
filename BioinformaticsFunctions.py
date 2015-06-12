@@ -30,3 +30,97 @@ def PatternSearch(pattern, genome):
 		positions.append(i)
 		i = genome.find(pattern, i + 1)
 	return positions
+def PatternToNumber(pattern):
+	return int(pattern.translate(str.maketrans("ACGT","0123")),4)
+def NumberToPattern(number,k):
+	num = number
+	pattern = []
+	while num != 0:
+		remainder = num % 4 # assume K > 1
+		num       = num // 4 # integer division
+		pattern.insert(0,"%d" % remainder)
+	while len(pattern) < k:
+		pattern.insert(0,'0')
+	pattern = "".join(pattern)
+	pattern = pattern.translate(str.maketrans("0123","ACGT"))
+	return pattern
+def ComputingFrequencies(text, k):
+	FrequencyArray = []
+	for i in range (0, 4 ** k):
+		FrequencyArray.append(0)
+	for i in range(0, (len(text) - k + 1)):
+		Pattern = text[i:(i+ k)]
+		j = PatternToNumber(Pattern)
+		FrequencyArray[j] += 1
+	return FrequencyArray
+def FasterFrequentWords(text, k):
+	FrequentPatterns = []
+	FrequencyArray = ComputingFrequencies(text, k)
+	maxCount = max(FrequencyArray)
+	for i in range (0, 4 ** k):
+		if FrequencyArray[i] == maxCount:
+			Pattern = NumberToPattern(i, k)
+			FrequentPatterns.append(Pattern)
+	return FrequentPatterns
+def ClumpFinding(genome, k, L, t):
+	FrequentPatterns = []
+	Clump = []
+	for i in range(0, 4 ** k):
+		Clump.append(0)
+	for i in range(0, len(genome) - L + 1):
+		text = genome[i:(i + L)]
+		FrequencyArray = ComputingFrequencies(text, k)
+		for j in range(0, 4 ** k):
+			if FrequencyArray[j] >= t:
+				Clump[j] = 1
+	for i in range(0, 4 ** k):
+		if Clump[i] == 1:
+			Pattern = NumberToPattern(i, k)
+			FrequentPatterns.append(Pattern)
+	return FrequentPatterns
+
+def BetterClumpFinding(genome, k, L, t):
+	FrequentPatterns = []
+	Clump = []
+	for i in range(0, 4 ** k):
+		Clump.append(0)
+	text = genome[0:L]
+	FrequencyArray = ComputingFrequencies(text, k)
+	for i in range(0, 4 ** k):
+		if FrequencyArray[i] >= t:
+			Clump[i] = 1
+	for i in range(1, len(genome) - L + 1):
+		#Genome(i − 1, k)
+		FirstPattern = genome[(i - 1):(i - 1 + k)]
+		# print("First Pattern: %s" % FirstPattern)
+		j = PatternToNumber(FirstPattern)
+		FrequencyArray[j] -= 1
+		#Genome(i + L − k, k)
+		LastPattern = genome[(i + L - k):(i + L)]
+		# print("Last Pattern: %s" % LastPattern)
+		j = PatternToNumber(LastPattern)
+		FrequencyArray[j] += 1
+		if FrequencyArray[j] >= t:
+			Clump[j] = 1
+	for i in range(0, 4 ** k):
+		if Clump[i] == 1:
+			Pattern = NumberToPattern(i, k)
+			FrequentPatterns.append(Pattern)
+	return FrequentPatterns
+
+# FindingFrequentWordsBySorting(Text , k)
+#         FrequentPatterns ← an empty set
+#         for i ← 0 to |Text| − k
+#             Pattern ← Text(i, k)
+#             Index(i) ← PatternToNumber(Pattern)
+#             Count(i) ← 1
+#         SortedIndex ← Sort(Index)
+#         for i ← 1 to |Text| − k
+#             if SortedIndex(i) = SortedIndex(i − 1)
+#                 Count(i) = Count(i − 1) + 1
+#         maxCount ← maximum value in Count
+#         for i ← 0 to |Text| − k
+#             if Count(i) = maxCount
+#                 Pattern ← NumberToPattern(SortedIndex(i), k)
+#                 add Pattern to the set FrequentPatterns
+#         return FrequentPatterns

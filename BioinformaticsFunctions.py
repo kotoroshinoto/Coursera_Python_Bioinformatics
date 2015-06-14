@@ -124,3 +124,30 @@ def BetterClumpFinding(genome, k, L, t):
 #                 Pattern ← NumberToPattern(SortedIndex(i), k)
 #                 add Pattern to the set FrequentPatterns
 #         return FrequentPatterns
+def Skew(genome):
+	skew = 0
+	genomeskew=[]
+	for i in range(0, len(genome)):
+		genomeskew.append(skew)
+		if genome[i] == 'G':
+			skew += 1
+		elif genome[i] == 'C':
+			skew -= 1
+	genomeskew.append(skew)
+	return genomeskew
+def MinimumSkew(genome):
+	skewlist = Skew(genome)
+	minimum = min(skewlist)
+	# print(minimum)
+	min_indexes = []
+	for i in range(0,len(skewlist)):
+		if(skewlist[i] == minimum):
+			min_indexes.append(i)
+	return min_indexes
+def HammingDistance(seq1, seq2):
+	assert(len(seq1) == len(seq2))
+	hamdist = 0
+	for i in range(0,len(seq1)):
+		if(seq1[i] != seq2[i]):
+			hamdist += 1
+	return hamdist

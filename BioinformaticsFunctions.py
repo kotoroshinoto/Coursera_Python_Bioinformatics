@@ -151,3 +151,84 @@ def HammingDistance(seq1, seq2):
 		if(seq1[i] != seq2[i]):
 			hamdist += 1
 	return hamdist
+def ApproximatePatternSearch(pattern, genome, d):
+	positions = []
+	for i in range(0,len(genome) - len(pattern) + 1):
+		pattern2 = genome[i:i + len(pattern)]
+		if HammingDistance(pattern, pattern2) <= d:
+			positions.append(i)
+	return positions
+def ApproximatePatternCount(genome, pattern, d):
+	count = 0
+	for i in range(0,len(genome) - len(pattern) + 1):
+		pattern2 = genome[i:i + len(pattern)]
+		if HammingDistance(pattern, pattern2) <= d:
+			count += 1
+	return count
+
+
+# def ComputingApproximateFrequencies(text, k, d):
+# 	FrequencyArray = []
+# 	for i in range (0, 4 ** k):
+# 		FrequencyArray.append(0)
+# 	for i in range(0, (len(text) - k + 1)):
+# 		Pattern = text[i:(i + k)]
+# 		for j in range(0, 4 ** k):
+# 			Pattern2 = NumberToPattern(j,k)
+# 			if(HammingDistance(Pattern,Pattern2) <= d):
+# 				FrequencyArray[j] += 1
+# 	return FrequencyArray
+def FrequentApproximateWords(text, k, d):
+	FrequentPatterns = []
+	possiblePatternCounts = []
+	for i in range(0, 4 ** k):
+		pattern = NumberToPattern(i, k)
+		possiblePatternCounts.append(ApproximatePatternCount(text, pattern, d))
+	maxCount = max(possiblePatternCounts)
+	for i in range(0, 4 ** k):
+		if possiblePatternCounts[i] == maxCount:
+			Pattern = NumberToPattern(i, k)
+			FrequentPatterns.append(Pattern)
+	return FrequentPatterns
+
+def FrequentApproximateSequences(text, k, d):
+	FrequentPatterns = []
+	possiblePatternCounts = []
+	seen = {}
+	for i in range(0, 4 ** k):
+		possiblePatternCounts.append(0)
+	for i in range(0, 4 ** k):
+		pattern = NumberToPattern(i, k)
+		patternRC = ReverseComplement(pattern)
+		if not (pattern in seen or patternRC in seen):
+			seen[pattern] = 1
+			count = ApproximatePatternCount(text, pattern, d)
+			countRC = 0
+			if pattern != patternRC:
+				seen[patternRC] = 1
+				countRC = ApproximatePatternCount(text, patternRC, d)
+			possiblePatternCounts[i] = (count + countRC)
+			if pattern != patternRC:
+				possiblePatternCounts[PatternToNumber(patternRC)] = (count + countRC)
+	maxCount = max(possiblePatternCounts)
+	for i in range(0, 4 ** k):
+		if possiblePatternCounts[i] == maxCount:
+			Pattern = NumberToPattern(i, k)
+			FrequentPatterns.append(Pattern)
+	return FrequentPatterns
+
+def Neighbors(Pattern, d):
+	bases = ['A', 'C', 'G', 'T']
+	if d == 0:
+		return Pattern
+	if len(Pattern) == 1:
+		return bases
+	Neighborhood = []
+	SuffixNeighbors = Neighbors(Pattern[1:], d)
+	for Text in SuffixNeighbors:
+		if HammingDistance(Pattern[1:], Text) < d :
+			for nucleotide in bases:
+				Neighborhood.append("%s%s" % (nucleotide,Text))
+		else:
+			Neighborhood.append("%s%s" % (Pattern[0],Text))
+	return Neighborhood

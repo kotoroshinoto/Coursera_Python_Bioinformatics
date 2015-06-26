@@ -380,14 +380,14 @@ def MotifHammingDistance(pattern, motifs):
 	return score
 
 def ScoreMotifs(motifs):
-	return HammingDistance(Consensus(motifs),motifs)
+	return HammingDistance(Consensus(motifs), motifs)
 
-# DistanceBetweenPatternAndStrings(Pattern, Dna)
-#     k ← |Pattern|
-#     distance ← 0
-#     for each string Text in Dna
-#         HammingDistance ← ∞
-#         for each k-mer Pattern’ in Text
+def DistanceBetweenPatternAndStrings(Pattern, Dna):
+	k = len(Pattern)
+    distance = 0
+    for Text in Dna:
+         HammingDistance = float('+inf')
+        # for each k-mer Pattern’ in Text
 #             if HammingDistance > HammingDistance(Pattern, Pattern’)
 #                 HammingDistance ← HammingDistance(Pattern, Pattern’)
 #         distance ← distance + HammingDistance

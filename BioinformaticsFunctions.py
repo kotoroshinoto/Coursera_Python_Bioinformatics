@@ -360,12 +360,7 @@ def Consensus(motifs):
 		countdict['T'] = counts['T'][i]
 		consensus.append(max(countdict.keys(), key=lambda k: countdict[k]))
 		print("max value %d for base: %s" % (counts[consensus[i]][i], consensus[i]))
-	return consensus
-
-
-def ScoreMotifs(motifs):
-	return
-
+	return "".join(consensus)
 
 def Entropy(motifs):
 	import math
@@ -377,3 +372,32 @@ def Entropy(motifs):
 			if profile[base][i] != 0:
 				logsum += -1 * (profile[base][i] * math.log(profile[base][i], 2))
 	return logsum
+
+def MotifHammingDistance(pattern, motifs):
+	score = 0
+	for motif in motifs:
+		score += HammingDistance(pattern, motif)
+	return score
+
+def ScoreMotifs(motifs):
+	return HammingDistance(Consensus(motifs),motifs)
+
+# DistanceBetweenPatternAndStrings(Pattern, Dna)
+#     k ← |Pattern|
+#     distance ← 0
+#     for each string Text in Dna
+#         HammingDistance ← ∞
+#         for each k-mer Pattern’ in Text
+#             if HammingDistance > HammingDistance(Pattern, Pattern’)
+#                 HammingDistance ← HammingDistance(Pattern, Pattern’)
+#         distance ← distance + HammingDistance
+#     return distance
+
+# MedianString(Dna, k)
+#     distance ← ∞
+#     for i ←0 to 4k −1
+#         Pattern ← NumberToPattern(i, k)
+#         if distance > DistanceBetweenPatternAndStrings(Pattern, Dna)
+#             distance ← DistanceBetweenPatternAndStrings(Pattern, Dna)
+#             Median ← Pattern
+#     return Median

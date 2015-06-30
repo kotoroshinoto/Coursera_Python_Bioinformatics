@@ -4,7 +4,6 @@ from BioinformaticsFunctions import *
 debug = True
 import sys
 lines = sys.stdin.read().splitlines()
-
 k = int(lines[0].strip())
 dnalist = []
 lines.pop(0)

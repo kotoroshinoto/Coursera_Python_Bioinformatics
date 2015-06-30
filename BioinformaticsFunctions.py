@@ -384,20 +384,49 @@ def ScoreMotifs(motifs):
 
 def DistanceBetweenPatternAndStrings(Pattern, Dna):
 	k = len(Pattern)
-    distance = 0
-    for Text in Dna:
-         HammingDistance = float('+inf')
-        # for each k-mer Pattern’ in Text
-#             if HammingDistance > HammingDistance(Pattern, Pattern’)
-#                 HammingDistance ← HammingDistance(Pattern, Pattern’)
-#         distance ← distance + HammingDistance
-#     return distance
+	distance = 0
+	for Text in Dna:
+		hammingdistance = float('+inf')
+		# for each k-mer Pattern’ in Text
+		for i in range(0, len(Text) - k + 1):
+			Pattern_ = Text[i:i + k]
+			hdist = HammingDistance(Pattern, Pattern_)
+			if hammingdistance > hdist:
+				hammingdistance = hdist
+		distance += hammingdistance
+	return distance
 
-# MedianString(Dna, k)
-#     distance ← ∞
-#     for i ←0 to 4k −1
-#         Pattern ← NumberToPattern(i, k)
-#         if distance > DistanceBetweenPatternAndStrings(Pattern, Dna)
-#             distance ← DistanceBetweenPatternAndStrings(Pattern, Dna)
-#             Median ← Pattern
-#     return Median
+def MedianString(dna, k):
+	distance = float('+inf')
+	median = ""
+	for i in range(0, 4 ** k):
+		pattern = NumberToPattern(i, k)
+		patstrdist = DistanceBetweenPatternAndStrings(pattern, dna)
+		if distance > patstrdist:
+			distance = patstrdist
+			median = pattern
+	return median
+
+def SeqProbabilityProfile(sequence, profile):
+	prob = 1.0
+	for i in range(0, len(sequence)):
+		base = sequence[i]
+		prob *= profile[base][i]
+	return prob
+
+def ProfileProbableKmer(dna, k, profile):
+	seen = {}
+	probseq = ""
+	probval = -0.1
+	# print("scanning %s |%d| for kmers of size %d" % (dna, len(dna), k))
+	for i in range(0, len(dna) - k + 1):
+		# print("i: %d, i+ k: %d" % (i, i + k))
+		pattern = dna[i:i + k]
+		if pattern not in seen:
+			# print("new pattern: %s" % pattern)
+			seen[pattern] = 1
+			prob = SeqProbabilityProfile(pattern, profile)
+			if prob > probval :
+				probval = prob
+				probseq = pattern
+	return probseq

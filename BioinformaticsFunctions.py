@@ -334,14 +334,6 @@ def CountMotifs(motifs):
 
 def ProfileMotifs(motifs):
 	counts = CountMotifs(motifs)
-
-	counts = CountMotifs(motifs)
-	for base in counts:
-		print("%s: " % base, end="")
-		for i in range(0, len(counts[base])):
-			print("%d" % counts[base][i], end="\t")
-		print("")
-
 	for base in counts:
 		for i in range(0, len(motifs[0])):
 			counts[base][i] = float(counts[base][i]) / float(len(motifs))
@@ -359,14 +351,14 @@ def Consensus(motifs):
 		countdict['G'] = counts['G'][i]
 		countdict['T'] = counts['T'][i]
 		consensus.append(max(countdict.keys(), key=lambda k: countdict[k]))
-		print("max value %d for base: %s" % (counts[consensus[i]][i], consensus[i]))
+		# print("max value %d for base: %s" % (counts[consensus[i]][i], consensus[i]))
 	return "".join(consensus)
 
 def Entropy(motifs):
 	import math
 	profile = ProfileMotifs(motifs)
 	logsum = 0.0
-	print("")
+	# print("")
 	for i in range(0, len(motifs[0])):
 		for base in profile:
 			if profile[base][i] != 0:
@@ -375,12 +367,14 @@ def Entropy(motifs):
 
 def MotifHammingDistance(pattern, motifs):
 	score = 0
+	# print("HAMMINGDISTANCE:")
 	for motif in motifs:
+		# print("\tmotif: %s" % motif)
 		score += HammingDistance(pattern, motif)
 	return score
 
 def ScoreMotifs(motifs):
-	return HammingDistance(Consensus(motifs), motifs)
+	return MotifHammingDistance(Consensus(motifs), motifs)
 
 def DistanceBetweenPatternAndStrings(Pattern, Dna):
 	k = len(Pattern)
@@ -430,3 +424,95 @@ def ProfileProbableKmer(dna, k, profile):
 				probval = prob
 				probseq = pattern
 	return probseq
+
+def GreedyMotifSearch(dna, k, t):
+	bestmotifs = []
+	firstseq_motifs = []
+	for seq in dna:
+		bestmotifs.append(seq[0:k])
+
+	for i in range(0,len(dna[0]) - k + 1):
+		firstseq_motifs.append(dna[0][i:i+k])
+		# print("appending motif: %s" % firstseq_motifs[i])
+	for motif in firstseq_motifs:
+		motifs = []
+		motifs.append(motif)
+		for i in range(1, t):
+			motifsprofile = ProfileMotifs(motifs)
+			motifs.append(ProfileProbableKmer(dna[i], k, motifsprofile))
+		# print("best motifs:\n%s" % "\n".join(bestmotifs))
+		# print("current motifs:\n%s" % "\n".join(motifs))
+		if ScoreMotifs(motifs) < ScoreMotifs(bestmotifs):
+			bestmotifs = motifs
+	return bestmotifs
+
+def ProfileMotifsLaplace(motifs):
+	counts = CountMotifs(motifs)
+	# for base in counts:
+	# 	print("%s: " % base, end="")
+	# 	for i in range(0, len(counts[base])):
+	# 		print("%d" % counts[base][i], end="\t")
+	# 	print("")
+
+	for base in counts:
+		for i in range(0, len(motifs[0])):
+			counts[base][i] = float(counts[base][i]+1) / float(len(motifs)+2)
+	return counts
+
+def GreedyMotifSearchLaplace(dna, k, t):
+	bestmotifs = []
+	firstseq_motifs = []
+	for seq in dna:
+		bestmotifs.append(seq[0:k])
+
+	for i in range(0,len(dna[0]) - k + 1):
+		firstseq_motifs.append(dna[0][i:i+k])
+		# print("appending motif: %s" % firstseq_motifs[i])
+	for motif in firstseq_motifs:
+		motifs = []
+		motifs.append(motif)
+		for i in range(1, t):
+			motifsprofile = ProfileMotifsLaplace(motifs)
+			motifs.append(ProfileProbableKmer(dna[i], k, motifsprofile))
+		# print("best motifs:\n%s" % "\n".join(bestmotifs))
+		# print("current motifs:\n%s" % "\n".join(motifs))
+		if ScoreMotifs(motifs) < ScoreMotifs(bestmotifs):
+			bestmotifs = motifs
+	return bestmotifs
+
+def MotifsFromProfile(profile, dna):
+	motifs = []
+	for seq in dna:
+		motifs.append(ProfileProbableKmer(seq, len(profile['A']), profile))
+	return motifs
+import random
+def RandomizedMotifSearch(dna, k, t):
+	bestmotifs = []
+	motifs = []
+	for seq in dna:
+		i = random.randint(0, len(seq) - k)
+		kmer = seq[i:i+k]
+		motifs.append(kmer)
+	bestmotifs = motifs
+	while True:
+		profile = ProfileMotifsLaplace(motifs)
+		motifs = MotifsFromProfile(profile, dna)
+
+		if ScoreMotifs(motifs) < ScoreMotifs(bestmotifs):
+			bestmotifs = motifs
+		else:
+			return bestmotifs
+
+
+ # GIBBSSAMPLER(Dna, k, t, N)
+ #        randomly select k-mers Motifs = (Motif1, …, Motift) in each string
+ #            from Dna
+ #        BestMotifs ← Motifs
+ #        for j ← 1 to N
+ #            i ← Random(t)
+ #            Profile ← profile matrix constructed from all strings in Motifs
+ #                       except for Motifi
+ #            Motifi ← Profile-randomly generated k-mer in the i-th sequence
+ #            if Score(Motifs) < Score(BestMotifs)
+ #                BestMotifs ← Motifs
+ #        return BestMotifs

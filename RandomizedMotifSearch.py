@@ -21,11 +21,5 @@ if 'debug' in globals():
 	print("t : %d" % t)
 	print("dnalist : \n%s" % "\n".join(dnalist))
 	print("\n")
-motifs = RandomizedMotifSearch(dnalist, k, t)
-bestmotifs = motifs
-for i in range(0, 1000):
-	# print("iteration # %d" % i)
-	motifs = RandomizedMotifSearch(dnalist, k, t)
-	if ScoreMotifs(motifs) < ScoreMotifs(bestmotifs):
-		bestmotifs = motifs
-print("\n".join(bestmotifs))
+motifs = RandomizedMotifSearchBestOfN(dnalist, k, t, 1000)
+print("\n".join(motifs))

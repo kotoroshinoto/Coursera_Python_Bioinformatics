@@ -485,34 +485,80 @@ def MotifsFromProfile(profile, dna):
 	for seq in dna:
 		motifs.append(ProfileProbableKmer(seq, len(profile['A']), profile))
 	return motifs
+
 import random
-def RandomizedMotifSearch(dna, k, t):
-	bestmotifs = []
-	motifs = []
+
+
+def RandomKmersFromSequences(dna, k):
+	kmers = []
 	for seq in dna:
 		i = random.randint(0, len(seq) - k)
 		kmer = seq[i:i+k]
-		motifs.append(kmer)
+		kmers.append(kmer)
+	return kmers
+
+
+def RandomizedMotifSearch(dna, k, t):
+	motifs = RandomKmersFromSequences(dna, k)
 	bestmotifs = motifs
+	bestScore = ScoreMotifs(bestmotifs)
 	while True:
 		profile = ProfileMotifsLaplace(motifs)
 		motifs = MotifsFromProfile(profile, dna)
-
-		if ScoreMotifs(motifs) < ScoreMotifs(bestmotifs):
+		score = ScoreMotifs(motifs)
+		if score < bestScore:
 			bestmotifs = motifs
+			bestScore = score
 		else:
-			return bestmotifs
+			return [bestmotifs, bestScore]
 
 
- # GIBBSSAMPLER(Dna, k, t, N)
- #        randomly select k-mers Motifs = (Motif1, …, Motift) in each string
- #            from Dna
- #        BestMotifs ← Motifs
- #        for j ← 1 to N
- #            i ← Random(t)
- #            Profile ← profile matrix constructed from all strings in Motifs
- #                       except for Motifi
- #            Motifi ← Profile-randomly generated k-mer in the i-th sequence
- #            if Score(Motifs) < Score(BestMotifs)
- #                BestMotifs ← Motifs
- #        return BestMotifs
+def RandomizedMotifSearchBestOfN(dna, k, t, n):
+	(bestmotifs, bestscore) = RandomizedMotifSearch(dna, k, t)
+	for j in range(1, n):
+		(motifs, score) = RandomizedMotifSearch(dna, k, t)
+		if score < bestscore:
+			bestmotifs = motifs
+			bestscore = score
+	return bestmotifs
+
+def RandomKmersFromSequence(seq, k):
+	i = random.randint(0, len(seq) - k)
+	kmer = seq[i:i+k]
+	return kmer
+
+def SeqKmerProbability(seq, k, profile):
+	probability = []
+	for i in range(0, len(seq) - k + 1):
+		kmer = seq[i:i+k]
+		probability.append(SeqProbabilityProfile(kmer, profile))
+	return probability
+import numpy
+
+def GibbsRandomKmer(seq, profile, k):
+	kmerprob = SeqKmerProbability(seq, k, profile)
+	probsum = 0
+	for prob in kmerprob:
+		probsum += prob
+	for i in range(0, len(kmerprob)):
+		kmerprob[i] /= probsum
+	i = numpy.random.choice(len(kmerprob), p=kmerprob)
+	return seq[i:i+k]
+
+def GibbsSampler(dna, k, t, n):
+	motifs = RandomKmersFromSequences(dna, k)
+	bestmotifs = list(motifs)
+	for j in range(0, n):
+		# print("Starting motifs:\n%s\n" % "\n".join(motifs))
+		i = random.randint(0, t-1)
+		# print("i: %d" % i)
+		motifi = motifs[i]
+		motifs.pop(i)
+		# print("truncated motifs:\n%s\n" % "\n".join(motifs))
+		profile = ProfileMotifsLaplace(motifs)
+		motifi = GibbsRandomKmer(dna[i], profile, k)
+		motifs.insert(i, motifi)
+		# print("new motifs:\n%s\n" % "\n".join(motifs))
+		if ScoreMotifs(motifs) < ScoreMotifs(bestmotifs):
+			bestmotifs = list(motifs)
+	return bestmotifs

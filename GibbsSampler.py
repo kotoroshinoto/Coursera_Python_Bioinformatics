@@ -7,6 +7,7 @@ lines = sys.stdin.read().splitlines()
 numbers = lines[0].strip().split()
 k = int(numbers[0])
 t = int(numbers[1])
+n = int(numbers[2])
 dnalist = []
 
 lines.pop(0)
@@ -19,13 +20,8 @@ while len(lines):
 if 'debug' in globals():
 	print("k : %d" % k)
 	print("t : %d" % t)
+	print("n : %d" % n)
 	print("dnalist : \n%s" % "\n".join(dnalist))
 	print("\n")
-motifs = RandomizedMotifSearch(dnalist, k, t)
-bestmotifs = motifs
-for i in range(0, 1000):
-	# print("iteration # %d" % i)
-	motifs = RandomizedMotifSearch(dnalist, k, t)
-	if ScoreMotifs(motifs) < ScoreMotifs(bestmotifs):
-		bestmotifs = motifs
-print("\n".join(bestmotifs))
+motifs = GibbsSampler(dnalist, k, t, n)
+print("\n".join(motifs))

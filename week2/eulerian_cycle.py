@@ -16,12 +16,17 @@ class NodeEdge:
 		else:
 			return "%d -> %d{%d}" % (self.source, self.dest, self.degree)
 
+	def validate(self):
+		assert (type(self.source) is int)
+		assert (type(self.dest) is int)
+		assert (type(self.degree) is int)
+
 
 class NumberNode:
 	def __init__(self, number: int):
 		self.value = number  # type: int
 		self.edges = dict()  # type: dict[int, NodeEdge]
-		self.edge_keys = list()  # type: dict[
+		self.edge_keys = list()  # type: list[int]
 
 	def __str__(self):
 		itercount = 0
@@ -48,6 +53,17 @@ class NumberNode:
 			# print("creating new edge with degree %d" % degree)
 			self.edges[edge.dest] = NodeEdge(edge.source, edge.dest, edge.degree)
 			self.edge_keys.append(edge.dest)
+
+	def validate(self):
+		assert (type(self.value) is int)
+		assert (type(self.edge_keys) is list)
+		for item in self.edge_keys:
+			assert (type(item) is int)
+		assert (type(self.edges) is dict)
+		for item in self.edges:
+			assert (type(item) is int)
+			assert (type(self.edges[item]) is NodeEdge)
+			self.edges[item].validate()
 
 
 class EulerianGraph:
@@ -91,6 +107,16 @@ class EulerianGraph:
 			new_graph.add_edges(edge)
 		return new_graph
 
+	def validate_types(self):
+		assert (type(self.node_keys) is list)
+		for item in self.node_keys:
+			assert (type(item) is int)
+		assert (type(self.nodes) is dict)
+		for item in self.nodes:
+			assert (type(item) is int)
+			assert (type(self.nodes[item]) is NumberNode)
+			self.nodes[item].validate()
+
 
 class UnexploredEdges:
 	def __init__(self, graph: EulerianGraph):
@@ -100,12 +126,11 @@ class UnexploredEdges:
 		self.traversal_count = dict()  # type: dict[NodeEdge, int]
 		self.traversed_nodes_w_unexplored_edges = list()  # type: list[int]
 		for source in graph.node_keys:
+			if source not in self.sources_w_unexplored_edges:
+				self.sources_w_unexplored_edges.append(source)
+				self.unexplored_edges[source] = list()
 			for dest in graph.nodes[source].edge_keys:
 				edge_node = graph.get_edge(source, dest)
-				self.sources_w_unexplored_edges.append(edge_node)
-				if source not in self.sources_w_unexplored_edges:
-					self.sources_w_unexplored_edges.append(source)
-					self.unexplored_edges[source] = list()
 				self.unexplored_edges[source].append(edge_node)
 
 	def get_random_source_w_unexplored_edges(self) -> int:
@@ -115,26 +140,29 @@ class UnexploredEdges:
 		return random.choice(self.traversed_nodes_w_unexplored_edges)
 
 	def get_random_unexplored_edge_for_source(self, source: int) -> 'NodeEdge':
+		if not (type(source) is int):
+			print("attempted to provide non-integer %s of type %s" % (source, type(source)))
 		return random.choice(self.unexplored_edges[source])
 
-	def mark_traversal(self, NodeEdge):
-		if NodeEdge not in self.traversal_count:
-			self.traversal_count[NodeEdge] = 1
+	def mark_traversal(self, edge: 'NodeEdge'):
+		if edge not in self.traversal_count:
+			self.traversal_count[edge] = 1
 		else:
-			self.traversal_count[NodeEdge] += 1
+			self.traversal_count[edge] += 1
+		# print("counted %d traversals of edge: %s" % (edge.degree, edge))
 		#check if edge needs to be removed
-		if self.traversal_count[NodeEdge] == NodeEdge.degree:
-			self.unexplored_edges[NodeEdge.source].remove(NodeEdge)
+		if self.traversal_count[edge] == edge.degree:
+			self.unexplored_edges[edge.source].remove(edge)
 			#check if source has no remaining unexplored edges (and thus needs to be removed)
-			if len(self.unexplored_edges[NodeEdge.source]) == 0:
-				self.unexplored_edges.pop(NodeEdge.source)
-				self.sources_w_unexplored_edges.remove(NodeEdge.source)
-				if NodeEdge.source in self.traversed_nodes_w_unexplored_edges:
-					self.traversed_nodes_w_unexplored_edges.remove(NodeEdge.source)
-			elif NodeEdge.source not in self.traversed_nodes_w_unexplored_edges:
-				self.traversed_nodes_w_unexplored_edges.append(NodeEdge.source)
-		elif NodeEdge.source not in self.traversed_nodes_w_unexplored_edges:
-			self.traversed_nodes_w_unexplored_edges.append(NodeEdge.source)
+			if len(self.unexplored_edges[edge.source]) == 0:
+				self.unexplored_edges.pop(edge.source)
+				self.sources_w_unexplored_edges.remove(edge.source)
+				if edge.source in self.traversed_nodes_w_unexplored_edges:
+					self.traversed_nodes_w_unexplored_edges.remove(edge.source)
+			elif edge.source not in self.traversed_nodes_w_unexplored_edges:
+				self.traversed_nodes_w_unexplored_edges.append(edge.source)
+		elif edge.source not in self.traversed_nodes_w_unexplored_edges:
+			self.traversed_nodes_w_unexplored_edges.append(edge.source)
 
 	def __len__(self):
 		return len(self.sources_w_unexplored_edges)
@@ -143,33 +171,54 @@ class UnexploredEdges:
 class EulerianCycle:
 	def __init__(self, graph: EulerianGraph):
 		# list of edges, in order
-		self.whole_path = list()  # type: list[int]
-		unexplored = UnexploredEdges(graph)
+		self.cycle = list()  # type: list[int]
+		self.unexplored = UnexploredEdges(graph)
 		# form a cycle Cycle by randomly walking in Graph (don't visit the same edge twice!)
+		start = self.unexplored.get_random_source_w_unexplored_edges()
+		self.cycle = self.random_walk(start)
+		# print("initial cycle: %s" % self.__str__())
 		# while there are unexplored edges in Graph
-		while len(unexplored) > 0:
+		while len(self.unexplored) > 0:
 			# 	select a node newStart in Cycle with still unexplored edges
-			newStart = unexplored.get_random_source_w_unexplored_edges()
-			self.whole_path.append(newStart)
-			chosen_edge = unexplored.get_random_unexplored_edge_for_source(newStart)
-			current_node = chosen_edge.dest
-			print("newStart: %s, %s, %s" % (newStart.__str__(), chosen_edge.__str__(), current_node.__str__()))
-			unexplored.mark_traversal(chosen_edge)
-			self.whole_path.append(current_node)
-			while current_node != newStart:
-				chosen_edge = unexplored.get_random_unexplored_edge_for_source(current_node)
-				current_node = chosen_edge.dest
-				unexplored.mark_traversal(chosen_edge)
-				if current_node != newStart:
-					self.whole_path.append(current_node)
+			new_start = self.unexplored.get_traversed_source_w_unexplored_edges()
+			new_cycle = self.random_walk(new_start)
+			# print("->".join(str(x) for x in new_cycle))
+			self.integrate_cycle(new_cycle)
+			# print("integrated cycle: %s" % self.__str__())
+
 		# 	form Cycle’ by traversing Cycle (starting at newStart) and then randomly walking
 
 		# 	Cycle ← Cycle’
 		# return Cycle
 
+	def random_walk(self, start) -> 'list[int]':
+		path = list()
+		path.append(start)
+		chosen_edge = self.unexplored.get_random_unexplored_edge_for_source(start)
+		current_node = chosen_edge.dest
+		# print("random walk start: %s" % chosen_edge)
+		self.unexplored.mark_traversal(chosen_edge)
+		path.append(current_node)
+		while current_node != start:
+			chosen_edge = self.unexplored.get_random_unexplored_edge_for_source(current_node)
+			current_node = chosen_edge.dest
+			self.unexplored.mark_traversal(chosen_edge)
+			path.append(current_node)
+			# print("current node: %s" % chosen_edge)
+		return path
+
+	def integrate_cycle(self, cycle: 'list[int]'):
+		first_node = cycle[0]
+		assert first_node in self.cycle
+		for i in range(0, len(self.cycle)):
+			if self.cycle[i] == first_node:
+				for j in range(1, len(cycle)):
+					self.cycle.insert(i + j, cycle[j])
+				return
+
 	def __str__(self):
 		str_list = list()
-		for item in self.whole_path:
+		for item in self.cycle:
 			str_list.append(str(item))
 		return "->".join(str_list)
 
@@ -183,6 +232,8 @@ for line in sys.stdin:  #  type: str
 		edges.append(NodeEdge(int(match_o.group(1)), int(num)))
 
 graph = EulerianGraph.construct_from_edges(edges)  # type EulerianGraph
+# print("%s\n" % graph)
+graph.validate_types()
 cycle = EulerianCycle(graph)
 print("%s" % cycle)
 

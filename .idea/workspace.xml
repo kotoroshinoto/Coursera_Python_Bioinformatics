@@ -2,13 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a216e55b-9f70-4123-ac19-9607460d4453" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/week2/challenges/eulerian_path.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/week2/challenges/eulerian_path_expected_output.txt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/week2/eulerian_path.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/Coursera2.iml" afterPath="$PROJECT_DIR$/.idea/Coursera2.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/week2/eulerian_cycle.py" afterPath="$PROJECT_DIR$/week2/eulerian_cycle.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/week2/challenges/dataset_203_2.txt" afterPath="$PROJECT_DIR$/Week2/challenges/dataset_203_2.txt" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/week2/challenges/dataset_203_6.txt" afterPath="$PROJECT_DIR$/Week2/challenges/dataset_203_6.txt" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/week2/challenges/eulerian_path.txt" afterPath="$PROJECT_DIR$/Week2/challenges/eulerian_path.txt" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/week2/challenges/eulerian_path_extra.txt" afterPath="$PROJECT_DIR$/Week2/challenges/eulerian_path_extra.txt" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/week2/challenges/output_203_2.txt" afterPath="$PROJECT_DIR$/Week2/challenges/output_203_2.txt" />
     </list>
     <ignored path="Coursera2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -143,7 +141,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="week2" />
+              <option name="myItemId" value="Week2" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -157,7 +155,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="week2" />
+              <option name="myItemId" value="Week2" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -514,7 +512,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/week2/challenges/eulerian_cycle.txt">
+    <entry file="file://$PROJECT_DIR$/Week2/challenges/eulerian_cycle.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
           <caret line="9" column="6" selection-start-line="9" selection-start-column="6" selection-end-line="9" selection-end-column="6" />
@@ -522,7 +520,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/week2/eulerian_cycle.py">
+    <entry file="file://$PROJECT_DIR$/Week2/eulerian_cycle.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1787">
           <caret line="39" column="21" selection-start-line="39" selection-start-column="21" selection-end-line="39" selection-end-column="21" />
@@ -530,7 +528,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/week2/eulerian_cycle.py">
+    <entry file="file://$PROJECT_DIR$/Week2/eulerian_cycle.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -538,7 +536,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/week2/challenges/eulerian_cycle.txt">
+    <entry file="file://$PROJECT_DIR$/Week2/challenges/eulerian_cycle.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="9" column="6" selection-start-line="9" selection-start-column="6" selection-end-line="9" selection-end-column="6" />
@@ -759,7 +757,7 @@
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/.PyCharm2016.2/system/python_stubs/1013586911/builtins.py" />
-    <entry file="file://$PROJECT_DIR$/week2/challenges/output_203_2.txt">
+    <entry file="file://$PROJECT_DIR$/Week2/challenges/output_203_2.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1215">
           <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
@@ -767,7 +765,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/week2/eulerian_cycle.py">
+    <entry file="file://$PROJECT_DIR$/Week2/eulerian_cycle.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1891">
           <caret line="238" column="0" selection-start-line="238" selection-start-column="0" selection-end-line="238" selection-end-column="0" />
@@ -775,7 +773,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/week2/challenges/eulerian_cycle.txt">
+    <entry file="file://$PROJECT_DIR$/Week2/challenges/eulerian_cycle.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
           <caret line="9" column="6" selection-start-line="9" selection-start-column="6" selection-end-line="9" selection-end-column="6" />
@@ -783,7 +781,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/week2/challenges/eulerian_path_expected_output.txt">
+    <entry file="file://$PROJECT_DIR$/Week2/challenges/eulerian_path_expected_output.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -791,7 +789,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/week2/challenges/eulerian_path_extra.txt">
+    <entry file="file://$PROJECT_DIR$/Week2/challenges/eulerian_path_extra.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
           <caret line="3" column="14" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
@@ -799,7 +797,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/week2/challenges/output_203_6.txt">
+    <entry file="file://$PROJECT_DIR$/Week2/challenges/output_203_6.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
@@ -807,7 +805,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/week2/eulerian_path.py">
+    <entry file="file://$PROJECT_DIR$/Week2/eulerian_path.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2975">
           <caret line="217" column="22" selection-start-line="217" selection-start-column="22" selection-end-line="217" selection-end-column="22" />
@@ -817,7 +815,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/week2/challenges/eulerian_path.txt">
+    <entry file="file://$PROJECT_DIR$/Week2/challenges/eulerian_path.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
           <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
